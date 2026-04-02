@@ -6,9 +6,12 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -35,4 +38,18 @@ public class User {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_militaries", //
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "military_id")
+    )
+    private List<Military> militaries = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Load> loads = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Caution> cautions = new ArrayList<>();
 }

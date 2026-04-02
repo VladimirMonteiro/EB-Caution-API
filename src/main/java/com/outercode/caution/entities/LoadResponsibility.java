@@ -25,4 +25,8 @@ public class LoadResponsibility {
     @Column(nullable = false)
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "load_id", nullable = false)
+    private Load load;
 }

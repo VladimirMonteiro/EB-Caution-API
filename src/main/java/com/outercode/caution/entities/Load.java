@@ -1,23 +1,25 @@
 package com.outercode.caution.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Load {
 
-    // id composted
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -27,4 +29,11 @@ public class Load {
     private Boolean active;
     @Column(nullable = false)
     private String pelName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @OneToMany(mappedBy = "load")
+    private List<LoadResponsibility> loadResponsibilities = new ArrayList<>();
 }

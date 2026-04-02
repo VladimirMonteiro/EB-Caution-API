@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -47,4 +49,10 @@ public class Military {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "military", fetch = FetchType.LAZY)
+    private List<Caution> cautions = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "militaries", fetch = FetchType.LAZY)
+    private List<User> users = new ArrayList<>();
 }

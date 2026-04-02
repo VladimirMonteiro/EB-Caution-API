@@ -1,6 +1,6 @@
 package com.outercode.caution.entities;
 
-import com.outercode.caution.entities.enums.MilitaryStatus;
+import com.outercode.caution.entities.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Military {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,34 +26,30 @@ public class Military {
     @Column(nullable = false)
     private String warName;
 
-    @Column(unique = true, nullable = false)
-    private String cpf;
-
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
-    private String phone;
+    private String password;
 
     @Column(nullable = false)
-    private String cia;
-
-    @Column(nullable = false)
-    private String pel;
-
-    @Column(nullable = false)
-    private String grad;
-
-    @Enumerated(EnumType.STRING)
-    private MilitaryStatus status;
+    private Role role;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "military", fetch = FetchType.LAZY)
-    private List<Caution> cautions = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_militaries", //
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "military_id")
+    )
+    private List<Military> militaries = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "militaries", fetch = FetchType.LAZY)
-    private List<User> users = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<Load> loads = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Caution> cautions = new ArrayList<>();
 }

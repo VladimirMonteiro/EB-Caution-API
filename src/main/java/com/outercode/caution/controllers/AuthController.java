@@ -2,6 +2,7 @@ package com.outercode.caution.controllers;
 
 import com.outercode.caution.dto.authDTO.LoginRequestDTO;
 import com.outercode.caution.dto.authDTO.LoginResponseDTO;
+import com.outercode.caution.dto.authDTO.RegisterRequestDTO;
 import com.outercode.caution.entities.User;
 import com.outercode.caution.infra.security.TokenService;
 import com.outercode.caution.repositories.UserRepository;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,5 +35,17 @@ public class AuthController {
         var token = this.tokenService.generateToken((User) auth.getPrincipal());
 
         return ResponseEntity.ok().body(new LoginResponseDTO(token));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register (@RequestBody @Valid RegisterRequestDTO data) {
+
+        if (this.userRepository.findByEmail(data.email()).isPresent()) return ResponseEntity.badRequest().build();
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
+        User newUser = new User(data.warName(), data.email(), encryptedPassword, data.role());
+
+        this.userRepository.save(newUser);
+        return ResponseEntity.ok().build();
     }
 }

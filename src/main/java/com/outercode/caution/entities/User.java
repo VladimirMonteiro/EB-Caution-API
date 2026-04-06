@@ -58,6 +58,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Caution> cautions = new ArrayList<>();
 
+    public User (String warName, String email, String password, Role role) {
+        this.warName = warName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities () {
         if (this.role == Role.ARMORER) {

@@ -101,4 +101,11 @@ public class User implements UserDetails {
     public boolean isEnabled () {
         return UserDetails.super.isEnabled();
     }
+
+    public void addMilitary(Military military) {
+        if (!this.militaries.contains(military)) {
+            this.militaries.add(military);
+            military.getUsers().add(this);
+        }
+    }
 }

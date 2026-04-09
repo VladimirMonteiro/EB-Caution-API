@@ -1,5 +1,6 @@
 package com.outercode.caution.entities;
 
+import com.outercode.caution.dto.militaryDTO.CreateMilitaryRequestDTO;
 import com.outercode.caution.entities.enums.MilitaryStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
+@Builder
 public class Military {
 
     @Id
@@ -50,9 +52,24 @@ public class Military {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "military", fetch = FetchType.LAZY)
     private List<Caution> cautions = new ArrayList<>();
 
+    @Builder.Default
     @ManyToMany(mappedBy = "militaries", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
+
+    public static Military create (CreateMilitaryRequestDTO dto) {
+        return Military.builder()
+                .warName(dto.warName())
+                .cpf(dto.cpf())
+                .email(dto.email())
+                .phone(dto.phone())
+                .cia(dto.cia())
+                .pel(dto.pel())
+                .grad(dto.grad())
+                .status(dto.status())
+                .build();
+    }
 }

@@ -7,10 +7,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "militaries", produces = "application/json")
@@ -22,5 +22,12 @@ public class MilitaryController {
     @PostMapping
     ResponseEntity<MilitaryResponse> create (@RequestBody @Valid CreateMilitaryRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(militaryService.create(dto));
+    }
+
+    @GetMapping("/{userId}")
+    ResponseEntity<List<MilitaryResponse>> findAll(@PathVariable UUID userId,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "15") int size) {
+        return ResponseEntity.status(HttpStatus.OK).body(militaryService.findAll(userId, page, size));
     }
 }

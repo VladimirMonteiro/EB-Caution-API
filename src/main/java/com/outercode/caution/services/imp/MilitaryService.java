@@ -9,8 +9,14 @@ import com.outercode.caution.repositories.UserRepository;
 import com.outercode.caution.services.IMilitaryService;
 import com.outercode.caution.services.imp.exceptions.ObjectNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +37,15 @@ public class MilitaryService implements IMilitaryService {
         user.addMilitary(military);
 
         return MilitaryMapper.toMilitaryResponse(military);
+    }
+
+    @Override
+    public List<MilitaryResponse> findAll(UUID userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size, Sort.by("warName"));
+
+        var pageMilitary = militaryRepository.findByUsers_Id(userId, pageable);
+
+        return pageMilitary.stream().map(MilitaryMapper::toMilitaryResponse).toList();
     }
 
     private Military findOrCreateMilitary (CreateMilitaryRequestDTO dto) {

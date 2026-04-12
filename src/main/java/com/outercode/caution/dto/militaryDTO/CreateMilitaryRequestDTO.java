@@ -6,11 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.br.CPF;
 
-import java.util.UUID;
-
 public record CreateMilitaryRequestDTO(
-        @NotNull(message = "Usuário é obrigatório.")
-        UUID userId,
         @NotBlank(message = "O nome de guerra é obrigatório.")
         String warName,
         @CPF(message = "CPF inválido.")

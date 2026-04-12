@@ -27,11 +27,11 @@ public class MilitaryService implements IMilitaryService {
 
     @Override
     @Transactional
-    public MilitaryResponse create(CreateMilitaryRequestDTO dto) {
+    public MilitaryResponse create(UUID userId, CreateMilitaryRequestDTO dto) {
 
         var military = findOrCreateMilitary(dto);
 
-        var user = userRepository.findById(dto.userId())
+        var user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado"));
 
         user.addMilitary(military);

@@ -13,31 +13,32 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "militaries", produces = "application/json")
+@RequestMapping(value = "{userId}/militaries", produces = "application/json")
 @RequiredArgsConstructor
 public class MilitaryController {
 
     private final IMilitaryService militaryService;
 
     @PostMapping
-    ResponseEntity<MilitaryResponse> create (@RequestBody @Valid CreateMilitaryRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(militaryService.create(dto));
+    ResponseEntity<MilitaryResponse> create (@PathVariable UUID userId,
+                                             @RequestBody @Valid CreateMilitaryRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(militaryService.create(userId, dto));
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping
     ResponseEntity<List<MilitaryResponse>> findAll(@PathVariable UUID userId,
                                                    @RequestParam(defaultValue = "0") int page,
                                                    @RequestParam(defaultValue = "15") int size) {
         return ResponseEntity.status(HttpStatus.OK).body(militaryService.findAll(userId, page, size));
     }
 
-    @GetMapping("/{userId}/{militaryId}")
+    @GetMapping("/{militaryId}")
     ResponseEntity<MilitaryResponse> findById(@PathVariable UUID userId,
                                               @PathVariable UUID militaryId) {
         return ResponseEntity.status(HttpStatus.OK).body(militaryService.findById(userId, militaryId));
     }
 
-    @DeleteMapping("/{userId}/{militaryId}")
+    @DeleteMapping("/{militaryId}")
     ResponseEntity<Void> delete(@PathVariable UUID userId,
                                 @PathVariable UUID militaryId) {
         militaryService.delete(userId, militaryId);

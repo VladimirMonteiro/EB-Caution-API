@@ -12,4 +12,5 @@ public interface MilitaryRepository extends JpaRepository<Military, UUID> {
 
     Optional<Military> findByCpf(String cpf);
     List<Military> findByUsers_Id(UUID userId, Pageable pageable);
+    Optional<Military> findByIdAndUsers_Id(UUID militaryId, UUID userId);
 }

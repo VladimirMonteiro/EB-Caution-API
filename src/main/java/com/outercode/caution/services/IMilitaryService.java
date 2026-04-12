@@ -10,4 +10,5 @@ public interface IMilitaryService {
 
     MilitaryResponse create(CreateMilitaryRequestDTO dto);
     List<MilitaryResponse> findAll(UUID userId, int page, int size);
+    MilitaryResponse findById(UUID userId, UUID militaryId);
 }

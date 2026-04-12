@@ -48,6 +48,13 @@ public class MilitaryService implements IMilitaryService {
         return pageMilitary.stream().map(MilitaryMapper::toMilitaryResponse).toList();
     }
 
+    @Override
+    public MilitaryResponse findById(UUID userId, UUID militaryId) {
+        var military = militaryRepository.findByIdAndUsers_Id(militaryId, userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Militar não encontrado ou não pertence ao usuário)"));
+        return MilitaryMapper.toMilitaryResponse(military);
+    }
+
     private Military findOrCreateMilitary (CreateMilitaryRequestDTO dto) {
         return militaryRepository.findByCpf(dto.cpf())
                 .orElseGet(() -> militaryRepository.save(Military.create(dto)));

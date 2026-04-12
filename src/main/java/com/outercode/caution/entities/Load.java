@@ -35,7 +35,7 @@ public class Load {
     private String cia;
 
     @ManyToMany(mappedBy = "loads")
-    private List<User> user;
+    private List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "load")
     private List<LoadResponsibility> loadResponsibilities = new ArrayList<>();

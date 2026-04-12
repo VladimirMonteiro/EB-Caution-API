@@ -36,4 +36,11 @@ public class MilitaryController {
                                               @PathVariable UUID militaryId) {
         return ResponseEntity.status(HttpStatus.OK).body(militaryService.findById(userId, militaryId));
     }
+
+    @DeleteMapping("/{userId}/{militaryId}")
+    ResponseEntity<Void> delete(@PathVariable UUID userId,
+                                @PathVariable UUID militaryId) {
+        militaryService.delete(userId, militaryId);
+        return ResponseEntity.noContent().build();
+    }
 }

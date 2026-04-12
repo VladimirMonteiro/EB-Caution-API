@@ -108,4 +108,11 @@ public class User implements UserDetails {
             military.getUsers().add(this);
         }
     }
+
+    public void removeMilitary(Military military) {
+        if (this.militaries.contains(military)) {
+            this.militaries.remove(military);
+            military.getUsers().remove(this);
+        }
+    }
 }

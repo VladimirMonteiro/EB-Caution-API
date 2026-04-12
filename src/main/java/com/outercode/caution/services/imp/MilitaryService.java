@@ -55,6 +55,23 @@ public class MilitaryService implements IMilitaryService {
         return MilitaryMapper.toMilitaryResponse(military);
     }
 
+    @Override
+    @Transactional
+    public void delete (UUID userId, UUID militaryId) {
+        var military = militaryRepository.findByIdAndUsers_Id(militaryId, userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Militar não encontrado ou não pertence ao usuário."));
+
+        if (military.getUsers().size() == 1) {
+            militaryRepository.deleteById(militaryId);
+        }
+
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado."));
+
+        user.removeMilitary(military);
+        userRepository.save(user);
+    }
+
     private Military findOrCreateMilitary (CreateMilitaryRequestDTO dto) {
         return militaryRepository.findByCpf(dto.cpf())
                 .orElseGet(() -> militaryRepository.save(Military.create(dto)));

@@ -30,4 +30,10 @@ public class MilitaryController {
                                                    @RequestParam(defaultValue = "15") int size) {
         return ResponseEntity.status(HttpStatus.OK).body(militaryService.findAll(userId, page, size));
     }
+
+    @GetMapping("/{userId}/{militaryId}")
+    ResponseEntity<MilitaryResponse> findById(@PathVariable UUID userId,
+                                              @PathVariable UUID militaryId) {
+        return ResponseEntity.status(HttpStatus.OK).body(militaryService.findById(userId, militaryId));
+    }
 }

@@ -27,12 +27,15 @@ public class Load {
 
     @Column(nullable = false)
     private Boolean active;
+
     @Column(nullable = false)
     private String pelName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private String cia;
+
+    @ManyToMany(mappedBy = "loads")
+    private List<User> user;
 
     @OneToMany(mappedBy = "load")
     private List<LoadResponsibility> loadResponsibilities = new ArrayList<>();

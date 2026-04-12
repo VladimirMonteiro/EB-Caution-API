@@ -40,6 +40,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private String grad;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -52,7 +55,12 @@ public class User implements UserDetails {
     )
     private List<Military> militaries = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_loads",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "load_id")
+    )
     private List<Load> loads = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")

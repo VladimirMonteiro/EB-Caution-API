@@ -12,5 +12,7 @@ public record RegisterRequestDTO(
         @NotBlank(message = "A senha é obrigatória.")
         String password,
         @NotNull(message = "A função é obrigatória.")
-        Role role) {
+        Role role,
+        @NotBlank(message = "A graduação é obrigatória.")
+        String grad) {
 }

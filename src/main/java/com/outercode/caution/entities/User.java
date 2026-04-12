@@ -43,6 +43,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String grad;
 
+    private boolean active;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -55,7 +57,7 @@ public class User implements UserDetails {
     )
     private List<Military> militaries = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "users_loads",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -66,11 +68,12 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Caution> cautions = new ArrayList<>();
 
-    public User (String warName, String email, String password, Role role) {
+    public User (String warName, String email, String password, Role role, String grad) {
         this.warName = warName;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.grad = grad;
     }
 
     @Override
@@ -121,6 +124,13 @@ public class User implements UserDetails {
         if (this.militaries.contains(military)) {
             this.militaries.remove(military);
             military.getUsers().remove(this);
+        }
+    }
+
+    public void addLoad(Load load) {
+        if (!this.loads.contains(load)) {
+            this.loads.add(load);
+            load.getUsers().add(this);
         }
     }
 }

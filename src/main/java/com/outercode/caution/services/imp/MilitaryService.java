@@ -25,8 +25,8 @@ public class MilitaryService implements IMilitaryService {
     private final MilitaryRepository militaryRepository;
     private final UserRepository userRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public MilitaryResponse create(CreateMilitaryRequestDTO dto) {
 
         var military = findOrCreateMilitary(dto);
@@ -40,6 +40,7 @@ public class MilitaryService implements IMilitaryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MilitaryResponse> findAll(UUID userId, int page, int size) {
         Pageable pageable = PageRequest.of(page,size, Sort.by("warName"));
 
@@ -49,6 +50,7 @@ public class MilitaryService implements IMilitaryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MilitaryResponse findById(UUID userId, UUID militaryId) {
         var military = militaryRepository.findByIdAndUsers_Id(militaryId, userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Militar não encontrado ou não pertence ao usuário)"));

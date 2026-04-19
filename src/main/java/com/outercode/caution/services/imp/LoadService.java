@@ -3,6 +3,7 @@ package com.outercode.caution.services.imp;
 import com.outercode.caution.dto.LoadItemDTO.CreateLoadItemRequestDTO;
 import com.outercode.caution.dto.LoadItemDTO.LoadItemResponse;
 import com.outercode.caution.dto.loadDTO.CreateLoadRequestDTO;
+import com.outercode.caution.dto.loadDTO.LoadDetailsResponseDTO;
 import com.outercode.caution.dto.loadDTO.LoadResponse;
 import com.outercode.caution.entities.Load;
 import com.outercode.caution.entities.LoadItem;
@@ -70,8 +71,8 @@ public class LoadService implements ILoadService {
         loadItemRepository.save(loadItem);
 
         return new LoadItemResponse(
-                load.getId(),
                 material.getId(),
+                material.getName(),
                 loadItem.getExpectedQuantity(),
                 loadItem.getDescription()
         );
@@ -80,9 +81,18 @@ public class LoadService implements ILoadService {
     @Override
     public List<LoadResponse> findAll(UUID userId, int page, int size) {
         var pageable = PageRequest.of(page, size, Sort.by("pelName"));
-
         var loadPage = loadRepository.findByUsers_Id(userId, pageable);
 
         return loadPage.stream().map(LoadMapper::toLoadResponse).toList();
+    }
+
+    @Override
+    public LoadDetailsResponseDTO findById(UUID userId, UUID loadId) {
+        var load = loadRepository.findByIdAndUsers_Id(loadId, userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Usuario ou carga nao encontrada."));
+
+        var loadItems = loadItemRepository.findById_Load_Id(loadId);
+
+        return LoadMapper.toLoadDetailsResponse(load, loadItems);
     }
 }

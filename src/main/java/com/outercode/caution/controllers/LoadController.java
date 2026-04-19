@@ -3,13 +3,20 @@ package com.outercode.caution.controllers;
 import com.outercode.caution.dto.LoadItemDTO.CreateLoadItemRequestDTO;
 import com.outercode.caution.dto.LoadItemDTO.LoadItemResponse;
 import com.outercode.caution.dto.loadDTO.CreateLoadRequestDTO;
+import com.outercode.caution.dto.loadDTO.LoadDetailsResponseDTO;
 import com.outercode.caution.dto.loadDTO.LoadResponse;
 import com.outercode.caution.services.imp.LoadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,5 +48,11 @@ public class LoadController {
                                                       @RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.status(HttpStatus.OK).body(loadService.findAll(userId, page, size));
+    }
+
+    @GetMapping("/{loadId}")
+    public ResponseEntity<LoadDetailsResponseDTO> findById(@PathVariable UUID userId,
+                                                           @PathVariable UUID loadId) {
+        return ResponseEntity.status(HttpStatus.OK).body(loadService.findById(userId, loadId));
     }
 }

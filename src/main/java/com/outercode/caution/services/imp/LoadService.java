@@ -7,18 +7,18 @@ import com.outercode.caution.dto.loadDTO.LoadResponse;
 import com.outercode.caution.entities.Load;
 import com.outercode.caution.entities.LoadItem;
 import com.outercode.caution.entities.LoadResponsibility;
-import com.outercode.caution.repositories.LoadItemRepository;
-import com.outercode.caution.repositories.LoadRepository;
-import com.outercode.caution.repositories.LoadResponsibilityRepository;
-import com.outercode.caution.repositories.MaterialRepository;
-import com.outercode.caution.repositories.UserRepository;
+import com.outercode.caution.mappers.load.LoadMapper;
+import com.outercode.caution.repositories.*;
 import com.outercode.caution.services.ILoadService;
 import com.outercode.caution.services.imp.exceptions.ObjectNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -75,5 +75,14 @@ public class LoadService implements ILoadService {
                 loadItem.getExpectedQuantity(),
                 loadItem.getDescription()
         );
+    }
+
+    @Override
+    public List<LoadResponse> findAll(UUID userId, int page, int size) {
+        var pageable = PageRequest.of(page, size, Sort.by("pelName"));
+
+        var loadPage = loadRepository.findByUsers_Id(userId, pageable);
+
+        return loadPage.stream().map(LoadMapper::toLoadResponse).toList();
     }
 }

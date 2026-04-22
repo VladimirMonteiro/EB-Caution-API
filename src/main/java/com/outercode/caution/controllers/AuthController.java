@@ -4,6 +4,7 @@ import com.outercode.caution.dto.authDTO.LoginRequestDTO;
 import com.outercode.caution.dto.authDTO.LoginResponseDTO;
 import com.outercode.caution.dto.authDTO.RegisterRequestDTO;
 import com.outercode.caution.entities.User;
+import com.outercode.caution.entities.enums.Role;
 import com.outercode.caution.infra.security.TokenService;
 import com.outercode.caution.repositories.UserRepository;
 import jakarta.validation.Valid;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/auth", produces = "application/json")
@@ -42,8 +45,13 @@ public class AuthController {
 
         if (this.userRepository.findByEmail(data.email()).isPresent()) return ResponseEntity.badRequest().build();
 
+        if (!Objects.equals(data.password(), data.passwordConfirm())) {
+            throw new RuntimeException("As senhas não conferem.");
+        }
+
+        var role = data.role() != null ? data.role() : Role.ARMORER;
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = new User(data.warName(), data.email(), encryptedPassword, data.role(), data.grad());
+        User newUser = new User(data.warName(), data.email(), encryptedPassword, role , data.grad());
 
         this.userRepository.save(newUser);
         return ResponseEntity.ok().build();

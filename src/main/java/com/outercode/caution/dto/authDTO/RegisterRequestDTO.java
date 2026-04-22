@@ -11,7 +11,8 @@ public record RegisterRequestDTO(
         String email,
         @NotBlank(message = "A senha é obrigatória.")
         String password,
-        @NotNull(message = "A função é obrigatória.")
+        @NotBlank(message = "A confirmação de senha é obrigatória.")
+        String passwordConfirm,
         Role role,
         @NotBlank(message = "A graduação é obrigatória.")
         String grad) {

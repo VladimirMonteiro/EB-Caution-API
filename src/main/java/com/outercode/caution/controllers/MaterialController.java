@@ -7,10 +7,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "materials", produces = "application/json")
@@ -22,5 +21,11 @@ public class MaterialController {
     @PostMapping
     public ResponseEntity<MaterialResponse> create (@RequestBody @Valid CreateMaterialRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(materialService.create(dto));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MaterialResponse>> findAll(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.status(HttpStatus.OK).body(materialService.findAll(page, size));
     }
 }

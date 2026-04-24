@@ -6,8 +6,12 @@ import com.outercode.caution.entities.Material;
 import com.outercode.caution.repositories.MaterialRepository;
 import com.outercode.caution.services.IMaterialService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,5 +27,15 @@ public class MaterialService implements IMaterialService {
 
         materialRepository.save(material);
         return new MaterialResponse(material.getId(), material.getName());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MaterialResponse> findAll(int page, int size) {
+        var pageable = PageRequest.of(page, size, Sort.by("name"));
+        var materialPage = materialRepository.findAll(pageable);
+
+        return materialPage.stream()
+                .map(m -> new MaterialResponse(m.getId(), m.getName())).toList();
     }
 }

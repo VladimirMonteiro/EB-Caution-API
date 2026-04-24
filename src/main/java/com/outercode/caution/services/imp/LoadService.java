@@ -2,6 +2,7 @@ package com.outercode.caution.services.imp;
 
 import com.outercode.caution.dto.LoadItemDTO.CreateLoadItemRequestDTO;
 import com.outercode.caution.dto.LoadItemDTO.LoadItemResponse;
+import com.outercode.caution.dto.LoadItemDTO.UpdateLoadItemRequestDTO;
 import com.outercode.caution.dto.loadDTO.CreateLoadRequestDTO;
 import com.outercode.caution.dto.loadDTO.LoadDetailsResponseDTO;
 import com.outercode.caution.dto.loadDTO.LoadResponse;
@@ -107,5 +108,41 @@ public class LoadService implements ILoadService {
         var loadItems = loadItemRepository.findById_Load_Id(loadId);
 
         return LoadMapper.toLoadDetailsResponse(load, loadItems);
+    }
+
+    @Override
+    @Transactional
+    public LoadItemResponse updateLoadItem(
+            UUID userId,
+            UUID loadId,
+            UUID materialId,
+            UpdateLoadItemRequestDTO dto
+    ) {
+
+        var load = loadRepository.findByIdAndUsers_Id(loadId, userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Carga nao encontrada ou nao pertence ao usuario."));
+
+        var loadItem = loadItemRepository
+                .findById_Load_IdAndId_Material_Id(loadId, materialId)
+                .orElseThrow(() -> new ObjectNotFoundException("Item da carga nao encontrado."));
+
+        if (dto.expectedQuantity() != null) {
+            loadItem.setExpectedQuantity(dto.expectedQuantity());
+        }
+
+        if (dto.description() != null) {
+            loadItem.setDescription(dto.description());
+        }
+
+        loadItemRepository.save(loadItem);
+
+        var material = loadItem.getId().getMaterial();
+
+        return new LoadItemResponse(
+                material.getId(),
+                material.getName(),
+                loadItem.getExpectedQuantity(),
+                loadItem.getDescription()
+        );
     }
 }

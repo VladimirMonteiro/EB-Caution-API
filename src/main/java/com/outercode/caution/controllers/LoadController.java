@@ -2,6 +2,7 @@ package com.outercode.caution.controllers;
 
 import com.outercode.caution.dto.LoadItemDTO.CreateLoadItemRequestDTO;
 import com.outercode.caution.dto.LoadItemDTO.LoadItemResponse;
+import com.outercode.caution.dto.LoadItemDTO.UpdateLoadItemRequestDTO;
 import com.outercode.caution.dto.loadDTO.CreateLoadRequestDTO;
 import com.outercode.caution.dto.loadDTO.LoadDetailsResponseDTO;
 import com.outercode.caution.dto.loadDTO.LoadResponse;
@@ -56,5 +57,13 @@ public class LoadController {
                                         @PathVariable UUID materialId) {
         loadService.removeLoadItem(userId, loadId, materialId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{loadId}/items/{materialId}")
+    public ResponseEntity<LoadItemResponse> updateLoadItem(@PathVariable UUID userId,
+                                                           @PathVariable UUID loadId,
+                                                           @PathVariable UUID materialId,
+                                                           @RequestBody UpdateLoadItemRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(loadService.updateLoadItem(userId, loadId, materialId, dto));
     }
 }

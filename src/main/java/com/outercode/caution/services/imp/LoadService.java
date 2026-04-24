@@ -79,6 +79,19 @@ public class LoadService implements ILoadService {
     }
 
     @Override
+    @Transactional
+    public void removeLoadItem(UUID userId, UUID loadId, UUID materialId) {
+        loadRepository.findByIdAndUsers_Id(loadId, userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Carga nao encontrada ou nao pertence ao usuario."));
+
+        var loadItem = loadItemRepository
+                .findById_Load_IdAndId_Material_Id(loadId, materialId)
+                .orElseThrow(() -> new ObjectNotFoundException("Item da carga nao encontrado."));
+
+        loadItemRepository.delete(loadItem);
+    }
+
+    @Override
     public List<LoadResponse> findAll(UUID userId, int page, int size) {
         var pageable = PageRequest.of(page, size, Sort.by("pelName"));
         var loadPage = loadRepository.findByUsers_Id(userId, pageable);

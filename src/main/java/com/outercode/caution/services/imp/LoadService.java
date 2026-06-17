@@ -16,8 +16,10 @@ import com.outercode.caution.services.imp.exceptions.ObjectNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -75,6 +77,7 @@ public class LoadService implements ILoadService {
                 material.getId(),
                 material.getName(),
                 loadItem.getExpectedQuantity(),
+                loadItem.getAvailableQuantity(),
                 loadItem.getDescription()
         );
     }
@@ -102,12 +105,10 @@ public class LoadService implements ILoadService {
 
     @Override
     public LoadDetailsResponseDTO findById(UUID userId, UUID loadId) {
-        var load = loadRepository.findByIdAndUsers_Id(loadId, userId)
+        var load = loadRepository.findByIdWithItems(loadId, userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Usuario ou carga nao encontrada."));
 
-        var loadItems = loadItemRepository.findById_Load_Id(loadId);
-
-        return LoadMapper.toLoadDetailsResponse(load, loadItems);
+        return LoadMapper.toLoadDetailsResponse(load, load.getItems());
     }
 
     @Override
@@ -127,7 +128,10 @@ public class LoadService implements ILoadService {
                 .orElseThrow(() -> new ObjectNotFoundException("Item da carga nao encontrado."));
 
         if (dto.expectedQuantity() != null) {
+            validateQuantityUpdate(loadItem, dto.expectedQuantity());
+            var recalculatedAvailableQuantity = calculateAvailableQuantity(loadItem, dto.expectedQuantity());
             loadItem.setExpectedQuantity(dto.expectedQuantity());
+            loadItem.setAvailableQuantity(recalculatedAvailableQuantity);
         }
 
         if (dto.description() != null) {
@@ -142,7 +146,24 @@ public class LoadService implements ILoadService {
                 material.getId(),
                 material.getName(),
                 loadItem.getExpectedQuantity(),
+                loadItem.getAvailableQuantity(),
                 loadItem.getDescription()
         );
+    }
+
+    private void validateQuantityUpdate(LoadItem loadItem, Integer newExpectedQuantity) {
+        int cautionedQuantity = loadItem.getExpectedQuantity() - loadItem.getAvailableQuantity();
+
+        if (newExpectedQuantity < cautionedQuantity) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "A quantidade esperada nao pode ser menor que a quantidade ja cautelada."
+            );
+        }
+    }
+
+    private Integer calculateAvailableQuantity(LoadItem loadItem, Integer newExpectedQuantity) {
+        int cautionedQuantity = loadItem.getExpectedQuantity() - loadItem.getAvailableQuantity();
+        return newExpectedQuantity - cautionedQuantity;
     }
 }

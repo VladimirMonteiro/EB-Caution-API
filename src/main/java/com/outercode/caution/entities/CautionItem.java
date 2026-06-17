@@ -27,7 +27,6 @@ public class CautionItem {
     @Enumerated(EnumType.STRING)
     private CautionItemStatus status;
 
-    @Column(nullable = false)
     private LocalDateTime deliveryDate;
 
     public CautionItem(Material material, Caution caution, Integer quantity, CautionItemStatus status,

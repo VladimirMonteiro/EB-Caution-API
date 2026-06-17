@@ -24,12 +24,16 @@ public class LoadItem {
     @Column(nullable = false)
     private Integer expectedQuantity;
 
+    @Column(nullable = false)
+    private Integer availableQuantity;
+
     private String description;
 
     public LoadItem(Load load, Material material, Integer expectedQuantity, String description) {
         id.setLoad(load);
         id.setMaterial(material);
         this.expectedQuantity = expectedQuantity;
+        this.availableQuantity = expectedQuantity;
         this.description = description;
     }
 

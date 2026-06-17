@@ -1,5 +1,6 @@
 package com.outercode.caution.controllers;
 
+import com.outercode.caution.controllers.docs.IAuthController;
 import com.outercode.caution.dto.authDTO.LoginRequestDTO;
 import com.outercode.caution.dto.authDTO.LoginResponseDTO;
 import com.outercode.caution.dto.authDTO.RegisterRequestDTO;
@@ -23,7 +24,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping(value = "/auth", produces = "application/json")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController implements IAuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;

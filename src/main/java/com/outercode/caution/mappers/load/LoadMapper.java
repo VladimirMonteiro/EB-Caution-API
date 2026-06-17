@@ -38,6 +38,7 @@ public class LoadMapper {
                 item.getMaterial().getId(),
                 item.getMaterial().getName(),
                 item.getExpectedQuantity(),
+                item.getAvailableQuantity(),
                 item.getDescription()
         );
     }

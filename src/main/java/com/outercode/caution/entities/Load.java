@@ -37,6 +37,9 @@ public class Load {
     @ManyToMany(mappedBy = "loads")
     private List<User> users = new ArrayList<>();
 
+    @OneToMany(mappedBy = "id.load")
+    private List<LoadItem> items = new ArrayList<>();
+
     @OneToMany(mappedBy = "load")
     private List<LoadResponsibility> loadResponsibilities = new ArrayList<>();
 }
